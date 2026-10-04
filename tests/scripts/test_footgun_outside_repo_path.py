@@ -108,7 +108,7 @@ def test_cli_reports_violation_in_outside_file(tmp_path):
     outside.write_text(
         "import os\n"
         "def alive(pid):\n"
-        "    os.kill(pid, 0)\n"
+        "    os.kill(pid, 0)\n"  # windows-footgun: ok — fixture payload text, never executed
         "    return True\n",
         encoding="utf-8",
     )
@@ -116,4 +116,4 @@ def test_cli_reports_violation_in_outside_file(tmp_path):
     assert "Traceback" not in result.stderr, result.stderr
     assert result.returncode == 1, "a footgun in an outside file must fail the run"
     assert f"{outside}:3" in result.stdout
-    assert "[os.kill(pid, 0)]" in result.stdout
+    assert "[os.kill(pid, 0)]" in result.stdout  # windows-footgun: ok — asserting on linter output
